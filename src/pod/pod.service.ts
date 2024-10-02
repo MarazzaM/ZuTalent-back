@@ -16,9 +16,7 @@ export class PodService {
     try {       
       // Check the wallet's score
       const passportData = await this.scoreService.getPassportById(wallet);
-      if (passportData.passport.score >= this.MIN_REQUIRED_SCORE) {
-        // Continue with POD creation
-      } else {
+      if (passportData.passport.score < this.MIN_REQUIRED_SCORE) {
         throw new BadRequestException(`Insufficient score: Minimum required score is ${this.MIN_REQUIRED_SCORE}`);
       }
       
