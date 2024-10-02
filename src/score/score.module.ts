@@ -8,5 +8,6 @@ import { ScoreService } from './score.service';
   imports: [HttpModule, ConfigModule],
   controllers: [ScoreController],
   providers: [ScoreService],
+  exports: [ScoreService], 
 })
 export class ScoreModule {}
