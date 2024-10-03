@@ -16,19 +16,16 @@ export class PodService {
     try {       
       // Check the wallet's score
       const passportData = await this.scoreService.getPassportById(wallet);
-      if (passportData.passport.score < this.MIN_REQUIRED_SCORE) {
-        throw new BadRequestException(`Insufficient score: Minimum required score is ${this.MIN_REQUIRED_SCORE}`);
-      }
-      
       const pod = POD.sign(
         podEntriesFromSimplifiedJSON(JSON.stringify({
-          zupass_display: "Jupiter",
-          zupass_title: "Jupiter",
-          zupass_image_url: "https://jup.io/favicon.ico",
+          zupass_display: "ZuTalent",
+          zupass_title: "ZuTalent",
+          zupass_image_url: "https://zutalent.vercel.app/zutalent.png",
           timestamp: new Date().toISOString(),
-          issuedBy: "Jupiter",
+          issuedBy: "ZuTalent",
           owner: owner,
-          wallet: wallet
+          wallet: wallet,
+          score: passportData.passport.score
         })),
         this.ZUPASS_SIGNING_KEY
       );
