@@ -5,6 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { sha256 } from 'js-sha256';
 import { POD } from "@pcd/pod";
 import { ScoreService } from "../score/score.service";
+// Add these imports
+import axios from 'axios';
+
 @Injectable()
 export class AttestationService {
   private readonly provider: ethers.JsonRpcProvider;
@@ -74,11 +77,24 @@ export class AttestationService {
     console.log("Nullifier:", nullifier);
     const hashedNullifier = ethers.keccak256(ethers.toUtf8Bytes(nullifier));
 
+    // Check for existing attestations
+    const existingAttestations = await this.checkExistingAttestations(hashedNullifier);
+    if (existingAttestations.length > 0) {
+      console.log("Attestation already exists for this nullifier");
+      return {
+        message: "Attestation already exists for this nullifier",
+        existingAttestation: existingAttestations[0],
+        intendedData: {
+          score: score,
+          nullifier: hashedNullifier
+        }
+      };
+    }
+
     const encodedData = schemaEncoder.encodeData([
       { name: "score", value: score.toString(), type: "uint8" },
       { name: "nullifier", value: hashedNullifier, type: "bytes32" }
     ]);
-    console.log("Encoded data:", encodedData);
     const tx = await this.eas.attest({
       schema: schemaUID,
       data: {
@@ -92,11 +108,53 @@ export class AttestationService {
     const newAttestationUID = await tx.wait();
     console.log("New attestation UID:", newAttestationUID);
 
-    return newAttestationUID;
+    return {
+      message: "New attestation created",
+      attestationUID: newAttestationUID,
+      data: {
+        score: score,
+        nullifier: hashedNullifier
+      }
+    };
   } catch (error) {
     console.error("Error creating attestation:", error);
     throw error;
   }
 }
 
+private async checkExistingAttestations(hashedNullifier: string): Promise<any[]> {
+  const query = `
+    query Attestations($where: AttestationWhereInput) {
+      attestations(where: $where) {
+        id
+        attester
+        recipient
+        decodedDataJson
+      }
+    }
+  `;
+
+  const variables = {
+    where: {
+      decodedDataJson: {
+        contains: hashedNullifier
+      },
+      schemaId: {
+        equals: "0x4007ca3e517687c2e3776271b5a8b83c2d730cd39481e9d1b6e9308e0ac6c0a6"
+      }
+    }
+  };
+
+  try {
+    const response = await axios.post('https://base-sepolia.easscan.org/graphql', {
+      query,
+      variables
+    });
+
+    return response.data.data.attestations;
+  } catch (error) {
+    console.error("Error checking existing attestations:", error);
+    return [];
+    }
+  }
 }

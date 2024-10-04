@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@pcd/pod": "^0.1.7",
     "@privy-io/server-auth": "^1.14.0",
+    "axios": "^1.7.7",
     "ethers": "^6.13.3",
     "js-sha256": "^0.11.0",
     "reflect-metadata": "^0.2.0",
