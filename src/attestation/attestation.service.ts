@@ -66,11 +66,11 @@ export class AttestationService {
       console.log("Pod object:", podObject);
 
     // Access the wallet data
-
+    const nullifier = this.generateNullifier(podObject);
+      
     await this.eas.connect(this.signer);
     const schemaUID = "0x4007ca3e517687c2e3776271b5a8b83c2d730cd39481e9d1b6e9308e0ac6c0a6";
     const schemaEncoder = new SchemaEncoder("uint8 score,bytes32 nullifier");
-    const nullifier = this.generateNullifier(podObject);
     console.log("Nullifier:", nullifier);
     const hashedNullifier = ethers.keccak256(ethers.toUtf8Bytes(nullifier));
 
