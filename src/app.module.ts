@@ -6,13 +6,15 @@ import { AppController } from './app.controller';
 import { PodModule } from './pod/pod.module';
 import { ScoreModule } from './score/score.module';
 import { AttendeesModule } from './attendees/attendees.module';
+import { AttestationModule } from './attestation/attestation.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
     PrivyModule,
     PodModule,
     ScoreModule,
-    AttendeesModule,    
+    AttendeesModule,
+    AttestationModule,    
   ],
   providers: [AppService],
   controllers: [AppController],

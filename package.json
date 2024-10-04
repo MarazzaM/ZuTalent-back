@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@ethereum-attestation-service/eas-sdk": "^2.6.1",
     "@nestjs/axios": "^3.0.3",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
@@ -28,6 +29,8 @@
     "@nestjs/platform-express": "^10.0.0",
     "@pcd/pod": "^0.1.7",
     "@privy-io/server-auth": "^1.14.0",
+    "ethers": "^6.13.3",
+    "js-sha256": "^0.11.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
